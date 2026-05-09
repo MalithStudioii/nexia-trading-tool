@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexia Pro - Advanced Trading Terminal</title>
+    <meta name="description" content="Free advanced trading calculator. Calculate position size, risk percentage, RR, and live market prices.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap');
+        body { font-family: 'Outfit', sans-serif; background-color: #0b0e14; color: #e2e8f0; overflow-x: hidden; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .glass-panel {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 1rem;
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0b0e14; }
+        ::-webkit-scrollbar-thumb { background: #9333ea; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #06b6d4; }
+        
+        @keyframes flashGreen { 0% { background-color: rgba(34, 197, 94, 0.2); } 100% { background-color: transparent; } }
+        @keyframes flashRed { 0% { background-color: rgba(239, 68, 68, 0.2); } 100% { background-color: transparent; } }
+        .bg-flash-up { animation: flashGreen 0.5s ease-out; }
+        .bg-flash-down { animation: flashRed 0.5s ease-out; }
+
+        .feed-item { animation: slideIn 0.2s ease-out; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="min-h-screen p-2 md:p-6 flex justify-center items-start">
+
+    <div class="max-w-6xl w-full mx-auto space-y-4">
+        <!-- Header Section -->
+        <header class="flex flex-col lg:flex-row justify-between items-center glass-panel p-4 md:p-6 shadow-2xl relative overflow-hidden">
+            <div class="absolute top-0 right-1/4 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl -mt-20"></div>
+            
+            <div class="flex items-center gap-4 z-10">
+                <svg width="40" height="40" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="nexiaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#06b6d4" /><stop offset="100%" stop-color="#9333ea" />
+                        </linearGradient>
+                    </defs>
+                    <path d="M25 80V20L55 60V20H75V80L45 40V80H25Z" fill="url(#nexiaGrad)"/>
+                    <circle cx="15" cy="30" r="6" fill="url(#nexiaGrad)"/>
+                    <path d="M15 30 Q 25 30 25 40" stroke="url(#nexiaGrad)" stroke-width="3" fill="none"/>
+                    <circle cx="85" cy="70" r="6" fill="url(#nexiaGrad)"/>
+                    <path d="M75 60 Q 85 60 85 70" stroke="url(#nexiaGrad)" stroke-width="3" fill="none"/>
+                </svg>
+                <div>
+                    <h1 class="text-2xl font-extrabold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-purple-500 uppercase">Nexia Pro</h1>
+                    <p class="text-[10px] text-gray-400 uppercase tracking-widest">Advanced Trading Terminal</p>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap justify-center items-center gap-4 mt-4 lg:mt-0 z-10">
+                <div class="bg-slate-900/80 px-4 py-2 rounded-lg border border-slate-700/50 flex flex-col items-center">
+                    <span class="text-[10px] text-gray-400 uppercase">Market Sentiment</span>
+                    <div class="flex items-center gap-2">
+                        <i class="fas fa-tachometer-alt text-purple-400"></i>
+                        <span id="fng-value" class="font-bold text-white text-sm">Loading...</span>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/80 px-2 py-1 rounded-lg border border-slate-700/50 flex items-center">
+                    <select id="coin-select" onchange="changeCoin()" class="bg-transparent text-cyan-400 font-bold focus:outline-none p-2 cursor-pointer">
+                        <option value="BTC" class="bg-slate-900">BTC/USDT</option>
+                        <option value="ETH" class="bg-slate-900">ETH/USDT</option>
+                        <option value="SOL" class="bg-slate-900">SOL/USDT</option>
+                        <option value="XRP" class="bg-slate-900">XRP/USDT</option>
+                        <option value="DOGE" class="bg-slate-900">DOGE/USDT</option>
+                    </select>
+                    <div class="h-6 w-px bg-slate-700 mx-2"></div>
+                    <span id="live-price" class="font-mono text-lg font-bold text-white px-2 px-2 py-1 rounded transition-colors">$0.00</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+            
+            <!-- LEFT COLUMN: Inputs -->
+            <div class="lg:col-span-5 glass-panel p-5 relative">
+                <h2 class="text-lg font-semibold mb-5 flex items-center gap-2 text-cyan-400 border-b border-slate-700 pb-2">
+                    <i class="fas fa-keyboard"></i> Setup Parameters
+                </h2>
+
+                <div class="space-y-4">
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">Capital ($)</label>
+                            <input type="number" id="balance" class="w-full bg-slate-900/60 border border-slate-700 rounded p-2.5 text-white font-mono focus:border-cyan-500 outline-none" value="1000">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">Risk (%)</label>
+                            <input type="number" id="risk-pct" class="w-full bg-slate-900/60 border border-slate-700 rounded p-2.5 text-white font-mono focus:border-purple-500 outline-none" value="1.0" step="0.1">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">Entry Price</label>
+                            <input type="number" id="entry" class="w-full bg-slate-900/60 border border-slate-700 rounded p-2.5 text-white font-mono focus:border-cyan-500 outline-none" placeholder="e.g. 65000">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">Stop Loss</label>
+                            <input type="number" id="stoploss" class="w-full bg-slate-900/60 border border-slate-700 rounded p-2.5 text-white font-mono focus:border-red-500 outline-none" placeholder="e.g. 64000">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs text-gray-400 mb-1">Target Reward Ratio (R:R)</label>
+                        <select id="rr-ratio" class="w-full bg-slate-900/60 border border-slate-700 rounded p-2.5 text-white outline-none cursor-pointer">
+                            <option value="1">1:1 (Normal)</option>
+                            <option value="1.5">1:1.5 (Good)</option>
+                            <option value="2" selected>1:2 (Optimal)</option>
+                            <option value="3">1:3 (High Reward)</option>
+                            <option value="5">1:5 (Moonshot)</option>
+                        </select>
+                    </div>
+
+                    <button onclick="calculateTrade()" class="w-full mt-2 bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 text-white font-bold py-3 rounded shadow-lg shadow-purple-500/20 transition-all transform hover:-translate-y-0.5 text-sm uppercase tracking-wider">
+                        Calculate Setup
+                    </button>
+                </div>
+            </div>
+
+            <!-- MIDDLE COLUMN: Results -->
+            <div class="lg:col-span-4 flex flex-col gap-4">
+                <div id="export-box" class="glass-panel p-5 relative overflow-hidden flex-grow border-t-4 border-t-purple-500">
+                    <div class="absolute inset-0 flex items-center justify-center opacity-5 pointer-events-none">
+                        <i class="fas fa-chart-line text-9xl"></i>
+                    </div>
+
+                    <div class="flex justify-between items-start mb-4 border-b border-slate-700/50 pb-2">
+                        <h2 class="text-sm font-semibold text-purple-300 uppercase tracking-wide">Execution Plan</h2>
+                        <span id="trade-direction" class="text-xs font-bold px-2 py-1 rounded bg-slate-800 text-gray-400">PENDING</span>
+                    </div>
+
+                    <div class="space-y-4 z-10 relative">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-400">Position Size:</span>
+                            <span id="res-size" class="text-xl font-mono font-bold text-white">0.0000</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-400">Amount at Risk:</span>
+                            <span id="res-risk" class="text-lg font-mono font-bold text-red-400">$0.00</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-400">Take Profit Price:</span>
+                            <span id="res-tp-price" class="text-lg font-mono font-bold text-green-400">--</span>
+                        </div>
+                        <div class="flex justify-between items-center bg-slate-800/50 p-2 rounded border border-slate-700">
+                            <span class="text-sm text-cyan-300">Potential Profit:</span>
+                            <span id="res-profit" class="text-lg font-mono font-bold text-cyan-400">+$0.00</span>
+                        </div>
+                        <div class="flex justify-between items-center pt-2">
+                            <span class="text-xs text-gray-500">Est. Leverage:</span>
+                            <span id="res-leverage" class="text-xs font-mono text-gray-400">1x</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="downloadSetup()" class="bg-slate-800 hover:bg-slate-700 text-xs text-white p-3 rounded border border-slate-600 transition-all flex justify-center items-center gap-2">
+                        <i class="fas fa-download text-cyan-400"></i> Save Image
+                    </button>
+                    <!-- BMAC LINK EKA METHANATA DAANNA -->
+                    <a href="https://www.buymeacoffee.com/nexiatradingtool" target="_blank" class="bg-[#FFDD00] hover:bg-[#ffea00] text-black text-xs font-bold p-3 rounded transition-all flex justify-center items-center gap-2">
+                    <i class="fas fa-mug-hot"></i> Tip the Dev
+                    </a>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN: Live Trade Feed & Affiliate -->
+            <div class="lg:col-span-3 glass-panel p-0 overflow-hidden flex flex-col">
+                <div class="p-3 border-b border-slate-700/50 bg-slate-900/50 flex justify-between items-center">
+                    <h3 class="text-xs font-semibold text-gray-300 uppercase tracking-wider"><i class="fas fa-stream text-cyan-500 mr-1"></i> Live Trades</h3>
+                    <span class="flex h-2 w-2 relative">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                    </span>
+                </div>
+                <div id="trade-feed" class="flex-grow overflow-hidden p-2 space-y-1 h-64 md:h-auto text-xs font-mono">
+                    <div class="text-center text-gray-600 mt-10">Connecting to Market...</div>
+                </div>
+                
+                <!-- මෙතන ඔයාගේ අලුත් Binance Affiliate Link එක තියෙනවා -->
+                <a href="https://www.binance.com/referral/earn-together/refer2earn-usdc/claim?hl=en&ref=GRO_28502_B51JY&utm_source=referral_entrance" target="_blank" class="block w-full bg-gradient-to-r from-slate-800 to-slate-900 text-center text-cyan-400 text-xs py-3 border-t border-slate-700 hover:text-white transition-colors">
+                    <i class="fas fa-bolt mr-1 text-yellow-400"></i> Trade this setup on Binance
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        async function fetchFNG() {
+            try {
+                const response = await fetch('https://api.alternative.me/fng/?limit=1');
+                const data = await response.json();
+                const fng = data.data[0];
+                const el = document.getElementById('fng-value');
+                el.textContent = `${fng.value} (${fng.value_classification})`;
+                if(fng.value < 40) el.className = "font-bold text-red-400 text-sm";
+                else if(fng.value > 60) el.className = "font-bold text-green-400 text-sm";
+                else el.className = "font-bold text-yellow-400 text-sm";
+            } catch (error) {
+                document.getElementById('fng-value').textContent = "Data Unavailable";
+            }
+        }
+        fetchFNG();
+
+        let ws;
+        let simInterval;
+        let currentPrice = 0;
+        
+        const basePrices = { 'BTC': 65000, 'ETH': 3500, 'SOL': 150, 'XRP': 0.6, 'DOGE': 0.15 };
+
+        function updateUIData(price, qty, isBuyerMaker) {
+            const priceEl = document.getElementById('live-price');
+            const feedEl = document.getElementById('trade-feed');
+            
+            let displayPrice = price < 1 ? price.toFixed(4) : price.toFixed(2);
+            
+            if (price > currentPrice) {
+                priceEl.classList.remove('bg-flash-down');
+                void priceEl.offsetWidth; 
+                priceEl.classList.add('bg-flash-up');
+                priceEl.style.color = '#4ade80'; 
+            } else if (price < currentPrice) {
+                priceEl.classList.remove('bg-flash-up');
+                void priceEl.offsetWidth;
+                priceEl.classList.add('bg-flash-down');
+                priceEl.style.color = '#f87171'; 
+            }
+            priceEl.textContent = '$' + displayPrice;
+            currentPrice = price;
+
+            const tradeDiv = document.createElement('div');
+            tradeDiv.className = `feed-item flex justify-between px-2 py-1 rounded bg-slate-800/30 ${isBuyerMaker ? 'text-red-400' : 'text-green-400'}`;
+            tradeDiv.innerHTML = `<span>${displayPrice}</span> <span>${qty}</span>`;
+            
+            feedEl.prepend(tradeDiv);
+            if(feedEl.children.length > 15) {
+                feedEl.removeChild(feedEl.lastChild);
+            }
+        }
+
+        function startSimulation(coin) {
+            if(simInterval) clearInterval(simInterval);
+            document.querySelector('#trade-feed').innerHTML = '';
+            
+            let currentSimPrice = basePrices[coin] || 50000;
+            
+            fetch(`https://api.binance.com/api/v3/ticker/price?symbol=${coin}USDT`)
+                .then(res => res.json())
+                .then(data => {
+                    if(data && data.price) {
+                        currentSimPrice = parseFloat(data.price);
+                        document.getElementById('entry').value = currentSimPrice < 1 ? currentSimPrice.toFixed(4) : currentSimPrice.toFixed(2);
+                    }
+                })
+                .catch(e => console.log("REST fetch failed, using base simulation."));
+            
+            simInterval = setInterval(() => {
+                const volatility = currentSimPrice * 0.0002; 
+                const change = (Math.random() * volatility * 2) - volatility;
+                currentSimPrice += change;
+                
+                const qty = (Math.random() * (coin === 'BTC' ? 2 : 100)).toFixed(4);
+                const isSell = Math.random() > 0.5;
+                
+                updateUIData(currentSimPrice, qty, isSell);
+            }, 800);
+        }
+
+        function connectWS(coin) {
+            if(ws) ws.close(); 
+            if(simInterval) clearInterval(simInterval);
+            
+            const symbol = coin.toLowerCase() + 'usdt';
+            const feedEl = document.getElementById('trade-feed');
+            feedEl.innerHTML = ''; 
+
+            try {
+                ws = new WebSocket(`wss://stream.binance.com:9443/ws/${symbol}@trade`);
+                
+                ws.onmessage = (event) => {
+                    const data = JSON.parse(event.data);
+                    updateUIData(parseFloat(data.p), parseFloat(data.q).toFixed(4), data.m);
+                };
+
+                ws.onerror = (e) => {
+                    startSimulation(coin);
+                };
+            } catch (error) {
+                startSimulation(coin);
+            }
+        }
+
+        function changeCoin() {
+            const coin = document.getElementById('coin-select').value;
+            currentPrice = 0; 
+            connectWS(coin);
+            
+            setTimeout(() => {
+                if(currentPrice > 0) {
+                    document.getElementById('entry').value = currentPrice < 1 ? currentPrice.toFixed(4) : currentPrice.toFixed(2);
+                }
+            }, 1500);
+        }
+        
+        changeCoin();
+
+        function calculateTrade() {
+            const balance = parseFloat(document.getElementById('balance').value);
+            const riskPct = parseFloat(document.getElementById('risk-pct').value);
+            const entry = parseFloat(document.getElementById('entry').value);
+            const stoploss = parseFloat(document.getElementById('stoploss').value);
+            const rr = parseFloat(document.getElementById('rr-ratio').value);
+
+            if(!balance || !entry || !stoploss) { 
+                alert("Please fill Capital, Entry, and Stop Loss fields."); 
+                return; 
+            }
+
+            if(entry === stoploss) {
+                alert("Entry and Stop Loss cannot be the same.");
+                return;
+            }
+
+            const isLong = entry > stoploss;
+            const riskAmount = balance * (riskPct / 100);
+            const stopDistance = Math.abs(entry - stoploss);
+            
+            const positionSize = riskAmount / stopDistance;
+            
+            let tpPrice = 0;
+            if(isLong) {
+                tpPrice = entry + (stopDistance * rr);
+                document.getElementById('trade-direction').textContent = "LONG SETUP";
+                document.getElementById('trade-direction').className = "text-xs font-bold px-2 py-1 rounded bg-green-500/20 text-green-400";
+            } else {
+                tpPrice = entry - (stopDistance * rr);
+                document.getElementById('trade-direction').textContent = "SHORT SETUP";
+                document.getElementById('trade-direction').className = "text-xs font-bold px-2 py-1 rounded bg-red-500/20 text-red-400";
+            }
+
+            const profitAmount = riskAmount * rr;
+            const positionValue = positionSize * entry;
+            const reqLeverage = positionValue / balance;
+
+            document.getElementById('res-risk').textContent = '$' + riskAmount.toFixed(2);
+            document.getElementById('res-size').textContent = positionSize < 1 ? positionSize.toFixed(4) : positionSize.toFixed(2);
+            document.getElementById('res-tp-price').textContent = '$' + (tpPrice < 1 ? tpPrice.toFixed(4) : tpPrice.toFixed(2));
+            document.getElementById('res-profit').textContent = '+$' + profitAmount.toFixed(2);
+            document.getElementById('res-leverage').textContent = reqLeverage.toFixed(1) + 'x';
+        }
+
+        function downloadSetup() {
+            const box = document.getElementById('export-box');
+            html2canvas(box, {
+                backgroundColor: '#0f111a',
+                scale: 2 
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `Nexia_Setup_${Date.now()}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        }
+    </script>
+</body>
+</html>
