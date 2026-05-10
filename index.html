@@ -25,6 +25,7 @@
     <meta property="twitter:description" content="Free advanced crypto position size planner. Calculate risk, fetch live Binance prices, and manage trades instantly. 100% Free & No login required!">
     <meta property="twitter:image" content="https://images.unsplash.com/photo-1621416894569-0f39ed31d247?auto=format&fit=crop&w=1200&q=80">
     
+    <!-- CSS & Scripts (Fixed Links) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -67,6 +68,7 @@
 
     <div class="max-w-7xl w-full mx-auto space-y-4">
         
+        <!-- Header -->
         <header class="flex flex-col lg:flex-row justify-between items-center glass-panel p-4 shadow-2xl relative overflow-hidden">
             <div class="absolute top-0 right-1/4 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl -mt-20"></div>
             
@@ -108,6 +110,7 @@
             </div>
         </header>
 
+        <!-- Market Mood Bar -->
         <div class="glass-panel p-4 flex flex-col sm:flex-row justify-between items-center gap-4 shadow-lg border-l-4 border-l-yellow-500">
             <div class="flex items-center gap-3">
                 <div id="fng-pulse" class="w-3 h-3 rounded-full bg-yellow-500 animate-pulse"></div>
@@ -120,12 +123,15 @@
                 <div id="fng-bar" class="h-full bg-yellow-500 transition-all duration-1000 w-[50%]"></div>
             </div>
         </div>
+
+        <!-- TradingView Chart -->
         <div class="glass-panel p-2 h-96 w-full relative overflow-hidden" id="tv_container">
             <div id="tradingview_chart" class="h-full w-full"></div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
             
+            <!-- Left: Inputs -->
             <div class="lg:col-span-4 glass-panel p-5 relative">
                 <h2 class="text-sm font-semibold mb-4 flex items-center gap-2 text-cyan-400 uppercase tracking-wide border-b border-slate-700 pb-2">
                     <i class="fas fa-sliders-h"></i> Setup Parameters
@@ -181,6 +187,7 @@
                 </div>
             </div>
 
+            <!-- Middle: Execution Plan -->
             <div class="lg:col-span-4 flex flex-col gap-4">
                 <div id="export-box" class="glass-panel p-5 relative overflow-hidden flex-grow border-t-4 border-t-purple-500">
                     <div class="absolute inset-0 flex items-center justify-center opacity-5 pointer-events-none"><i class="fas fa-chart-line text-9xl"></i></div>
@@ -211,13 +218,13 @@
                             <span id="res-profit" class="text-lg font-mono font-bold text-cyan-400">+$0.00</span>
                         </div>
 
-                        <!-- 🟢 Cleaned Scale-Out Box -->
+                        <!-- Scale-Out Box -->
                         <div id="scale-out-box" class="hidden mt-3 bg-slate-900/80 p-3 rounded border border-slate-700/50">
                             <div class="text-xs text-gray-400 mb-2 border-b border-slate-700 pb-1 font-semibold uppercase tracking-wide">
                                 <i class="fas fa-layer-group text-purple-400 mr-1"></i> Scale-Out Plan (Partial TPs)
                             </div>
                             <div id="tp-targets-list" class="space-y-2 mt-2">
-                                <!-- JS එකෙන් Auto මෙතනට TP ටික වැටෙනවා -->
+                                <!-- Auto inserted -->
                             </div>
                         </div>
 
@@ -238,8 +245,8 @@
                 </div>
             </div>
 
+            <!-- Right: Journal -->
             <div class="lg:col-span-4 flex flex-col gap-4">
-                
                 <div class="glass-panel p-4 flex-grow flex flex-col">
                     <div class="flex justify-between items-center border-b border-slate-700 pb-2 mb-3">
                         <h2 class="text-sm font-semibold text-cyan-400 uppercase tracking-wide"><i class="fas fa-book"></i> Journal</h2>
@@ -247,7 +254,6 @@
                             <i class="fas fa-file-csv"></i> Export CSV
                         </button>
                     </div>
-                    
                     <div id="journal-list" class="flex-grow overflow-y-auto space-y-2 h-32 pr-2 text-xs font-mono">
                         <div class="text-gray-500 text-center mt-8 italic">No trades recorded yet.</div>
                     </div>
@@ -260,15 +266,59 @@
                     <div id="trade-feed" class="p-2 space-y-1 h-24 overflow-hidden text-[10px] font-mono opacity-80">
                         <div class="text-center text-gray-600 mt-4">Connecting...</div>
                     </div>
-                    
                     <a href="https://www.binance.com/referral/earn-together/refer2earn-usdc/claim?hl=en&ref=GRO_28502_B51JY&utm_source=referral_entrance" target="_blank" class="block w-full bg-gradient-to-r from-slate-800 to-slate-900 text-center text-cyan-400 text-xs py-3 border-t border-slate-700 hover:text-white transition-colors">
                         <i class="fas fa-bolt mr-1 text-yellow-400"></i> Execute on Binance
                     </a>
                 </div>
+            </div>
+        </div>
 
+        <!-- 🟢 30-Day Compounding Forecast Box -->
+        <div class="glass-panel p-5 mt-4 border-t-4 border-t-cyan-500 relative overflow-hidden shadow-xl">
+            <div class="absolute -right-10 -bottom-10 text-cyan-500/5 text-9xl font-extrabold pointer-events-none font-mono">30X</div>
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-700/50 pb-3 mb-4 gap-2 z-10 relative">
+                <div>
+                    <h2 class="text-sm font-semibold text-cyan-400 uppercase tracking-wide flex items-center gap-2">
+                        <i class="fas fa-chart-pie text-purple-400"></i> 30-Day Compounding Forecast
+                    </h2>
+                    <p class="text-xs text-gray-400 mt-0.5">The power of consistency: Growing your capital step-by-step</p>
+                </div>
+                <div class="bg-slate-900/80 px-2.5 py-1 rounded border border-slate-700 flex items-center gap-2 text-xs z-10">
+                    <span class="text-gray-400">Daily Target:</span>
+                    <select id="daily-goal-pct" onchange="updateCompounding()" class="bg-transparent text-cyan-400 font-bold outline-none cursor-pointer font-mono">
+                        <option value="0.01">1% Growth</option>
+                        <option value="0.02" selected>2% Growth</option>
+                        <option value="0.03">3% Growth</option>
+                        <option value="0.05">5% (Aggressive)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center z-10 relative">
+                <div class="bg-slate-900/50 p-3 rounded border border-slate-800 text-center">
+                    <span class="text-[10px] text-gray-500 uppercase block font-bold tracking-wider">Starting Capital</span>
+                    <span id="comp-start" class="text-lg font-mono font-bold text-white">$0.00</span>
+                </div>
+                <div class="bg-slate-900/50 p-3 rounded border border-slate-800 text-center relative">
+                    <span class="text-[10px] text-cyan-400 uppercase block font-bold tracking-wider animate-pulse">Est. Day 30 Balance</span>
+                    <span id="comp-end" class="text-xl font-mono font-extrabold text-cyan-300">$0.00</span>
+                </div>
+                <div class="bg-slate-900/50 p-3 rounded border border-slate-800 text-center">
+                    <span class="text-[10px] text-purple-400 uppercase block font-bold tracking-wider">Total Est. Profit</span>
+                    <span id="comp-profit" class="text-lg font-mono font-bold text-purple-300">+$0.00</span>
+                </div>
+            </div>
+            
+            <div class="mt-4 flex items-center gap-2 text-[10px] font-mono text-gray-500 z-10 relative">
+                <span>Day 1</span>
+                <div class="flex-grow bg-slate-900 h-1.5 rounded-full overflow-hidden flex">
+                    <div class="bg-gradient-to-r from-cyan-500 to-purple-500 w-full h-full rounded-full"></div>
+                </div>
+                <span class="text-purple-400 font-bold">Day 30 (Goal Hit!)</span>
             </div>
         </div>
         
+        <!-- Footer -->
         <footer class="mt-12 border-t border-gray-800 bg-gray-950/60 p-6 text-gray-400 text-xs rounded-2xl mb-4 shadow-xl">
             <div class="flex flex-wrap justify-center gap-4 mb-6">
                 <button onclick="openModal('aboutModal')" class="px-4 py-2 bg-gray-900 hover:bg-gray-800 border border-gray-700 hover:border-cyan-500 rounded-lg text-gray-300 hover:text-white transition-all font-medium flex items-center gap-2">
@@ -294,9 +344,9 @@
                 <p>Built for the global trading community.</p>
             </div>
         </footer>
-    </div> <!-- Closing max-w-7xl div -->
+    </div> 
 
-    <!-- 🟢 Cleaned Modals (Removed duplicates) -->
+    <!-- Modals -->
     <div id="aboutModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-gray-900 border border-gray-700 max-w-md w-full rounded-2xl p-6 text-left shadow-2xl">
             <div class="flex justify-between items-center mb-4 border-b border-gray-800 pb-2">
@@ -339,15 +389,14 @@
         </div>
     </div>
 
+    <!-- Scripts -->
     <script>
-        // --- Global Variables ---
         let ws;
         let simInterval;
         let currentPrice = 0;
         let tradeHistory = [];
         const basePrices = { 'BTC': 65000, 'ETH': 3500, 'SOL': 150, 'XRP': 0.6, 'DOGE': 0.15 };
 
-        // --- 1. Original FNG API Fetch (For Header Badge) ---
         async function fetchFNG() {
             try {
                 const response = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent('https://api.alternative.me/fng/?limit=1'));
@@ -363,7 +412,6 @@
             }
         }
 
-        // --- 🟢 NEW FEATURE JS: Live Market Mood Bar Fetcher ---
         async function fetchHorizontalFNG() {
             try {
                 const response = await fetch('https://api.alternative.me/fng/?limit=1');
@@ -392,7 +440,6 @@
                         fngBar.className = `h-full transition-all duration-1000 ${colorClass}`;
                         fngPulse.className = `w-3 h-3 rounded-full animate-pulse ${colorClass}`;
                         
-                        // Change border color of the box dynamically too
                         fngBar.parentElement.parentElement.className = `glass-panel p-4 flex flex-col sm:flex-row justify-between items-center gap-4 shadow-lg border-l-4 border-l-${colorClass.replace('bg-', '')}`;
                     }
                 }
@@ -402,7 +449,6 @@
             }
         }
 
-        // --- 2. TradingView Widget Update ---
         function loadChart(coin) {
             if (typeof TradingView === 'undefined') {
                 setTimeout(() => loadChart(coin), 500);
@@ -428,7 +474,6 @@
             });
         }
 
-        // --- 3. Binance Live Feed & Auto-Price ---
         async function fetchExactPrice(coin) {
             try {
                 const response = await fetch(`https://api.binance.com/api/v3/ticker/price?symbol=${coin}USDT`);
@@ -505,17 +550,35 @@
             connectWS(coin);        
             fetchExactPrice(coin);  
         }
-        
-        // Load all data on page start
+
+        function updateCompounding() {
+            const balanceInput = document.getElementById('balance');
+            if(!balanceInput) return;
+            
+            const startCapital = parseFloat(balanceInput.value) || 0;
+            const goalRate = parseFloat(document.getElementById('daily-goal-pct').value) || 0.02;
+            
+            const endCapital = startCapital * Math.pow((1 + goalRate), 30);
+            const totalProfit = endCapital - startCapital;
+            
+            document.getElementById('comp-start').textContent = '$' + startCapital.toFixed(2);
+            document.getElementById('comp-end').textContent = '$' + (endCapital < 1 ? endCapital.toFixed(4) : endCapital.toFixed(2));
+            document.getElementById('comp-profit').textContent = '+$' + (totalProfit < 1 ? totalProfit.toFixed(4) : totalProfit.toFixed(2));
+        }
+
         window.addEventListener('load', () => {
             fetchFNG();
-            fetchHorizontalFNG(); // Trigger new horizontal bar
+            fetchHorizontalFNG();
             changeCoin(); 
+            updateCompounding();
+            const balanceEl = document.getElementById('balance');
+            if(balanceEl) {
+                balanceEl.addEventListener('input', updateCompounding);
+            }
         });
         
-        setInterval(fetchHorizontalFNG, 3600000); // Silent hourly refresh
+        setInterval(fetchHorizontalFNG, 3600000);
 
-        // --- 4. Calculator & Trade Journal ---
         function calculateTrade() {
             const coin = document.getElementById('coin-select').value;
             const balance = parseFloat(document.getElementById('balance').value);
@@ -539,13 +602,11 @@
             const exitPositionValue = positionSize * tpPrice;
             const reqLeverage = positionValue / balance;
 
-            // 🟢 Calculate Exchange Fees (Entry + Exit) & Net Profit
             const entryFee = positionValue * feeRate;
             const exitFee = exitPositionValue * feeRate;
             const totalFees = entryFee + exitFee;
             const netProfit = grossProfit - totalFees;
 
-            // UI Update - Main Plan
             const dirEl = document.getElementById('trade-direction');
             dirEl.textContent = isLong ? "LONG SETUP" : "SHORT SETUP";
             dirEl.className = `text-xs font-bold px-2 py-1 rounded ${isLong ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`;
@@ -554,7 +615,6 @@
             document.getElementById('res-size').textContent = positionSize < 1 ? positionSize.toFixed(4) : positionSize.toFixed(2);
             document.getElementById('res-tp-price').textContent = '$' + (tpPrice < 1 ? tpPrice.toFixed(4) : tpPrice.toFixed(2));
             
-            // 🟢 Update New Fee & Net Profit UI
             const resFeesEl = document.getElementById('res-fees');
             if(resFeesEl) resFeesEl.textContent = '-$' + totalFees.toFixed(2);
             
@@ -563,7 +623,6 @@
             
             document.getElementById('res-leverage').textContent = reqLeverage.toFixed(1) + 'x';
             
-            // Scale-Out Plan Update
             const scaleOutBox = document.getElementById('scale-out-box');
             const tpList = document.getElementById('tp-targets-list');
             
@@ -643,7 +702,6 @@
             document.body.removeChild(link);
         }
 
-        // --- 5. Share Setup ---
         function downloadSetup() {
             const box = document.getElementById('export-box');
             html2canvas(box, { backgroundColor: '#0f111a', scale: 2 }).then(canvas => {
@@ -654,7 +712,6 @@
             });
         }
 
-        // --- Pop-up Modal Handling ---
         function openModal(id) {
             const modal = document.getElementById(id);
             if(modal) modal.classList.remove('hidden');
