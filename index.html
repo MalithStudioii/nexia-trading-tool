@@ -426,8 +426,8 @@
         // --- 🟢 UPDATED: Unified Market Sentiment Fetcher ---
         async function fetchMarketSentiment() {
             try {
-                // Using allorigins to prevent CORS issues that caused the "Unavailable" error
-                const response = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent('https://api.alternative.me/fng/?limit=1'));
+                // Directly fetching from the API without third-party proxies
+                const response = await fetch('https://api.alternative.me/fng/?limit=1');
                 const data = await response.json();
                 
                 if (data && data.data && data.data[0]) {
