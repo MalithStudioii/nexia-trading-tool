@@ -3,7 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexia Pro - Advanced Trading Terminal</title>
+    <title>Nexia Pro - Advanced Crypto Risk & Position Size Calculator</title>
+    <meta name="title" content="Nexia Pro - Advanced Crypto Risk & Position Size Calculator">
+    <meta name="description" content="Free advanced crypto trading terminal and position size planner built for day traders. Calculate risk, fetch live Binance prices, and export trade journals instantly. No login required!">
+    <meta name="keywords" content="crypto risk calculator, position size calculator, binance trading tool, crypto day trading, risk management crypto, nexia pro, free position size planner">
+    <meta name="robots" content="index, follow">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="language" content="English">
+
+    <link rel="canonical" href="https://g-tool.vercel.app/">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://g-tool.vercel.app/">
+    <meta property="og:title" content="Nexia Pro - Advanced Crypto Trading Terminal">
+    <meta property="og:description" content="Free advanced crypto position size planner. Calculate risk, fetch live Binance prices, and manage trades instantly. 100% Free & No login required!">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1621416894569-0f39ed31d247?auto=format&fit=crop&w=1200&q=80">
+
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://g-tool.vercel.app/">
+    <meta property="twitter:title" content="Nexia Pro - Advanced Crypto Trading Terminal">
+    <meta property="twitter:description" content="Free advanced crypto position size planner. Calculate risk, fetch live Binance prices, and manage trades instantly. 100% Free & No login required!">
+    <meta property="twitter:image" content="https://images.unsplash.com/photo-1621416894569-0f39ed31d247?auto=format&fit=crop&w=1200&q=80">
     <meta name="description" content="Free advanced trading calculator. Calculate position size, risk percentage, RR, and live market prices.">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -447,6 +467,65 @@
                 link.click();
             });
         }
+        // --- Pop-up Modal Handling Functions ---
+        function openModal(id) {
+            const modal = document.getElementById(id);
+            if(modal) modal.classList.remove('hidden');
+        }
+
+        function closeModal(id) {
+            const modal = document.getElementById(id);
+            if(modal) modal.classList.add('hidden');
+        }
     </script>
+    <footer class="mt-12 border-t border-gray-800 bg-gray-950/60 p-6 text-gray-400 text-xs rounded-2xl mb-8">
+    <div class="flex flex-wrap justify-center gap-4 mb-6">
+        <button onclick="openModal('aboutModal')" class="px-4 py-2 bg-gray-900 hover:bg-gray-800 border border-gray-700 hover:border-cyan-500 rounded-lg text-gray-300 hover:text-white transition-all font-medium flex items-center gap-2">
+            <span>ℹ️</span> About Nexia Pro
+        </button>
+        <button onclick="openModal('termsModal')" class="px-4 py-2 bg-gray-900 hover:bg-gray-800 border border-gray-700 hover:border-cyan-500 rounded-lg text-gray-300 hover:text-white transition-all font-medium flex items-center gap-2">
+            <span>🔒</span> Terms & Privacy
+        </button>
+    </div>
+
+    <div class="max-w-4xl mx-auto text-center border-t border-gray-900/80 pt-6 mb-4">
+        <h4 class="font-bold text-red-400 mb-2 text-xs tracking-wide uppercase">⚠️ Risk Disclaimer</h4>
+        <p class="leading-relaxed text-[11px] text-gray-500">
+            Trading cryptocurrencies involves significant financial risk. Nexia Pro does not provide financial, investment, or brokerage advice. All charts, output setups, and calculations are for educational and informational purposes only. Always conduct your own research (DYOR). Nexia Pro is not liable for any trading losses.
+        </p>
+    </div>
+
+    <div class="border-t border-gray-900 pt-4 text-center text-gray-600 flex flex-col sm:flex-row justify-between items-center gap-2 text-[10px]">
+        <p>© 2026 Nexia Pro. All rights reserved.</p>
+        <p>Built for the global trading community.</p>
+    </div>
+</footer>
+
+<div id="aboutModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-gray-900 border border-gray-700 max-w-md w-full rounded-2xl p-6 text-left shadow-2xl">
+        <div class="flex justify-between items-center mb-4 border-b border-gray-800 pb-2">
+            <h3 class="text-white font-bold text-base">ℹ️ About Nexia Pro</h3>
+            <button onclick="closeModal('aboutModal')" class="text-gray-400 hover:text-white font-bold text-lg">&times;</button>
+        </div>
+        <p class="text-gray-300 text-xs leading-relaxed mb-6">
+            Nexia Pro is an independent, free-to-use advanced trading terminal and risk management toolkit designed for professional day traders. We provide real-time Binance data integrations and position size planning without requiring any user logins or personal data.
+        </p>
+        <button onclick="closeModal('aboutModal')" class="w-full py-2 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-lg text-xs font-bold hover:opacity-90 transition-all">Got it</button>
+    </div>
+</div>
+
+<div id="termsModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-gray-900 border border-gray-700 max-w-md w-full rounded-2xl p-6 text-left shadow-2xl">
+        <div class="flex justify-between items-center mb-4 border-b border-gray-800 pb-2">
+            <h3 class="text-white font-bold text-base">🔒 Terms & Privacy</h3>
+            <button onclick="closeModal('termsModal')" class="text-gray-400 hover:text-white font-bold text-lg">&times;</button>
+        </div>
+        <div class="text-gray-300 text-xs leading-relaxed space-y-3 mb-6">
+            <p><strong class="text-white">No Data Storage:</strong> We do not store, track, or share your trading inputs, API keys, or personal information. All calculations and journal entries are processed locally in your browser.</p>
+            <p><strong class="text-white">Usage:</strong> By using this tool, you agree that Nexia Pro is strictly an analytical aid. We are not responsible for execution errors or market volatility.</p>
+        </div>
+        <button onclick="closeModal('termsModal')" class="w-full py-2 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-lg text-xs font-bold hover:opacity-90 transition-all">I Agree</button>
+    </div>
+</div>
 </body>
 </html>
